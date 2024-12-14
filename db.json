@@ -1,0 +1,35 @@
+{
+  "lists": [
+    {
+      "id": 1,
+      "name": "lista de la semana",
+      "products": [
+        1,
+        2
+      ],
+      "total": 43
+    },
+    {
+      "id": 2,
+      "name": "la papaya",
+      "products": [],
+      "total": 0
+    }
+  ],
+  "products": [
+    {
+      "id": 1,
+      "name": "leche",
+      "quantity": 2,
+      "unitPrice": 7.5,
+      "totalProduct": 15
+    },
+    {
+      "id": 2,
+      "name": "Queso",
+      "quantity": 2,
+      "unitPrice": 14,
+      "totalProduct": 28
+    }
+  ]
+}
