@@ -30,65 +30,61 @@ app.get("/lists", (req, res) => {
 
 // Crear una nueva lista
 app.post("/lists", (req, res) => {
-  const data = readData();
-  const { name } = req.body;
-
-  const newList = {
-    id: data.lists.length + 1,
-    name,
-    products: [],
-    total: 0.0,
-  };
-
-  data.lists.push(newList);
-  writeData(data);
-  res.json(newList);
-});
-
-// Agregar un producto a una lista
-app.post("/lists/:id/products", (req, res) => {
-  const data = readData();
-  const listId = parseInt(req.params.id);
-  const list = data.lists.find((l) => l.id === listId);
-
-  if (!list) {
-    return res.status(404).json({ message: "List not found" });
-  }
-
-  const { name, quantity, unitPrice } = req.body;
-
-  // Validación para asegurar que quantity y unitPrice son números positivos
-  if (quantity <= 0 || unitPrice <= 0) {
-    return res.status(400).json({ message: "Quantity and unit price must be greater than 0" });
-  }
-
-  // Cálculo del total del producto
-  const totalProduct = quantity * unitPrice;
-
-  // Crear un nuevo producto
-  const newProduct = {
-    id: data.products.length + 1,
-    name,
-    quantity,
-    unitPrice,
-    totalProduct,
-  };
-
-  // Añadir el nuevo producto al arreglo de productos
-  data.products.push(newProduct);
-
-  // Añadir el ID del nuevo producto a la lista correspondiente
-  list.products.push(newProduct.id);
-
-  // Actualizar el total de la lista con el nuevo total del producto
-  list.total = list.total + totalProduct;
-
-  // Guardar los datos actualizados
-  writeData(data);
-
-  // Responder con el mensaje de éxito y la lista actualizada
-  res.json({ message: "Product added successfully", list });
-});
+    const data = readData();
+    const { name } = req.body;
+  
+    // Incrementar el contador de IDs de listas
+    data.counters.listId += 1;
+  
+    const newList = {
+      id: data.counters.listId,
+      name,
+      products: [],
+      total: 0.0,
+    };
+  
+    data.lists.push(newList);
+    writeData(data);
+    res.json(newList);
+  });
+  
+  // Agregar un producto a una lista
+  app.post("/lists/:id/products", (req, res) => {
+    const data = readData();
+    const listId = parseInt(req.params.id);
+    const list = data.lists.find((l) => l.id === listId);
+  
+    if (!list) {
+      return res.status(404).json({ message: "List not found" });
+    }
+  
+    const { name, quantity, unitPrice } = req.body;
+  
+    if (quantity <= 0 || unitPrice <= 0) {
+      return res.status(400).json({ message: "Quantity and unit price must be greater than 0" });
+    }
+  
+    const totalProduct = quantity * unitPrice;
+  
+    // Incrementar el contador de IDs de productos
+    data.counters.productId += 1;
+  
+    const newProduct = {
+      id: data.counters.productId,
+      name,
+      quantity,
+      unitPrice,
+      totalProduct,
+    };
+  
+    data.products.push(newProduct);
+    list.products.push(newProduct.id);
+    list.total += totalProduct;
+  
+    writeData(data);
+    res.json({ message: "Product added successfully", list });
+  });
+  
 
 // Obtener los productos de una lista
 app.get("/lists/:id/products", (req, res) => {
